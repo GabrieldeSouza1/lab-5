@@ -11,26 +11,26 @@ HEADERS = {
 }
 
 def run_query(url: str, query, variables=None):
-    time.sleep(0.01)
+    time.sleep(0.1)
     
     response = requests.post(
         url, json={"query": query, "variables": variables}, headers=HEADERS)
     if response.status_code == 200:
-        return response.json(), response.status_code
+        return response
     
     print(f"Erro na consulta GraphQL ({response.status_code})")
     time.sleep(1)
     
-    return False, response.status_code
+    return False
 
 def run_rest(url: str):
-    time.sleep(0.01)
+    time.sleep(0.1)
     
     response = requests.get(url, headers=HEADERS)
     if response.status_code == 200:
-        return response.json(), response.status_code
+        return response
     
     print(f"Erro na consulta REST ({response.status_code})")
     time.sleep(1)
     
-    return False, response.status_code
+    return False
