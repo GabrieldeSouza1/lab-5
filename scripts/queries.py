@@ -44,7 +44,7 @@ query repository($owner: String!, $name: String!, $per_page: Int!, $cursor: Stri
 
 SIMPLE_QUERY = '''
 query ($per_page: Int!, $cursor: String) {
-  search(query: "stars:>0 sort:stars-desc", type: REPOSITORY, first: $per_page, after: $cursor) {
+  search(query: "stars:>1 sort:stars-desc", type: REPOSITORY, first: $per_page, after: $cursor) {
     edges {
       node {
         ... on Repository {

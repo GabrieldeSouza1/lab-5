@@ -65,8 +65,8 @@ def measure_rest_simple_query(limit):
     SEARCH_REPOS_URL = f"{BASE_URL}/search/repositories"
 
     try:
-        while len(repos) < (limit // PER_PAGE):
-            response = run_rest(f"{SEARCH_REPOS_URL}?q=stars:>0&sort=stars&order=desc&per_page={PER_PAGE}&page={page}")
+        while (len(repos) < (limit // PER_PAGE)):
+            response = run_rest(f"{SEARCH_REPOS_URL}?q=stars:>1&sort=stars&order=desc&per_page={PER_PAGE}&page={page}")
             
             if not response:
                 continue
