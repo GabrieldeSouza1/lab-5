@@ -1,11 +1,11 @@
-GRAPHQL_QUERY = '''
-query repository($owner: String!, $name: String!, $per_page: Int!, $afterCursor: String) {
+COMPLEX_QUERY = '''
+query repository($owner: String!, $name: String!, $per_page: Int!, $cursor: String) {
   repository(owner: $owner, name: $name) {
     pullRequests(
       states: [MERGED, CLOSED]
       orderBy: { field: CREATED_AT, direction: DESC }
       first: $per_page
-      after: $afterCursor
+      after: $cursor
     ) {
       edges {
         node {
@@ -37,6 +37,28 @@ query repository($owner: String!, $name: String!, $per_page: Int!, $afterCursor:
         endCursor
         hasNextPage
       }
+    }
+  }
+}
+'''
+
+SIMPLE_QUERY = '''
+query ($per_page: Int!, $cursor: String) {
+  search(query: "stars:>0 sort:stars-desc", type: REPOSITORY, first: $per_page, after: $cursor) {
+    edges {
+      node {
+        ... on Repository {
+          nameWithOwner
+          stargazerCount
+          pullRequests {
+            totalCount
+          }
+        }
+      }
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
     }
   }
 }
