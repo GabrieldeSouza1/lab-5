@@ -89,14 +89,19 @@ Nesta seção será apresentado os resultados do estudo, respondendo às pergunt
 Para responder à **RQ1**, foi comparado o Tempo Médio, em segundos, de resposta entre as consultas realizadas com GraphQL e REST. Os resultados médios das medições de tempo foram os seguintes:
 
 <!-- Gráfico de Barra barra_tempo_medio.png -->
+| ![barras_tempo_medio](https://github.com/GabrieldeSouza1/lab-5/assets/77488551/d1ba970e-c66c-449e-bcd4-92cf803d2b73) |
+| -- | 
+| ![57cbec72-75c7-4e9f-88b1-9bbeae3af5cd](https://github.com/GabrieldeSouza1/lab-5/assets/77488551/107f0743-c132-46f8-a825-c32f5c906784) |
+
+
 
 <!-- Graficos boxplot -->
 <div align="center">
 
-|||
+| Consulta Simples | Consulta Complexa |
 | -- | -- |
-|||
-|||
+| ![boxplot_tempo_query_simples_gql](https://github.com/GabrieldeSouza1/lab-5/assets/77488551/663d99bc-615c-4c83-a184-983ec9833903) | ![boxplot_tempo_query_complexa_gql](https://github.com/GabrieldeSouza1/lab-5/assets/77488551/bb16464e-df1d-427f-9de7-5841b0e4d690) |
+| ![boxplot_tempo_query_simples_rest](https://github.com/GabrieldeSouza1/lab-5/assets/77488551/ecd64ba8-cd7e-4068-bd49-00602f31d260) | ![boxplot_tempo_query_complexa_rest](https://github.com/GabrieldeSouza1/lab-5/assets/77488551/f7767eb6-e30a-4ed5-a38b-c6f0d6fe9bdd) |
 
 </div>
 
@@ -136,6 +141,7 @@ Para a Consulta Complexa, o _p-value_ (6.68e-11) é muito menor que $\alpha$, in
 Para responder à RQ2, foi comparado o tamanho médio das respostas entre as consultas realizadas com GraphQL e REST. Os resultados médios das medições de tamanho foram os seguintes:
 
 <!-- Gráfico de Barra barra_tamanho_medio.png -->
+![barras_tamanho_medio](https://github.com/GabrieldeSouza1/lab-5/assets/77488551/69379a73-1863-4ccb-9418-b75b675baaf2)
 
 Para as consultas realizadas, os tamanhos de resposta médios foram:
 
