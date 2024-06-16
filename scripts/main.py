@@ -201,6 +201,8 @@ def main():
         
     avg_results=summarize_results(summarized_results)
     save_to_csv(avg_results, 'avg_results.csv')
+    
+    # avg_results = read_csv('avg_results.csv')
         
     # Gráficos de Barras
     bar(
@@ -222,8 +224,8 @@ def main():
         title='Gráfico de Barras do Tamanho Médio por API e Tipo de Query'
     )
     
-    gql_results = read_csv('gql_results.csv')
-    rest_results = read_csv('rest_results.csv')
+    # gql_results = read_csv('gql_results.csv')
+    # rest_results = read_csv('rest_results.csv')
     
     # Boxplots
     simple_gql_time_results = get_column(filter_rows(gql_results, 'query', ['Simple']), 'time')  

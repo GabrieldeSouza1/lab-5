@@ -25,7 +25,7 @@ def bar(bar: str, label: str, data: list, value: str, x_label: str, y_label: str
     plt.show()
     
 def boxplot(data: list, columns: list, x_label: str, y_label: str, title: str):
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(6, 4))
     
     plt.boxplot(data, labels=columns)
     plt.xlabel(x_label)
