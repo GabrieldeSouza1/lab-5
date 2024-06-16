@@ -2,7 +2,8 @@ import time
 from qr_requests import run_query, run_rest
 from queries import COMPLEX_QUERY, SIMPLE_QUERY
 from func_utils import *
-from save_data import save_to_csv
+from save_data import *
+from graphics import *
 
 RUN_TIMES=10
 MAX_REPOS=100
@@ -10,6 +11,7 @@ MAX_PULL_REQUESTS=100
 PER_PAGE=10
 OWNER_NAME='freeCodeCamp'
 REPO_NAME='freeCodeCamp'
+ALPHA=0.05
 
 def measure_graphql(limit: int, query: str, owner: str=None, repo: str=None):
     start_time=time.time()
@@ -131,22 +133,20 @@ def measure_rest_complex_query(limit):
     
     
     except Exception as e:
-        print(f"\nErro durante a execução da consulta (Rest): {e}")
+        print(f"\nErro durante a execução da consulta (REST): {e}")
 
     finally:
         end_time=time.time()
         response_time=end_time - start_time
         return response_time, total_response_size
     
-
-
 def main():
-    results=[]
     summarized_results=[]
     
     print('GraphQL - Simple query\n')
     graphql_times=[]
     graphql_sizes=[]
+    gql_results=[]
     limit = MAX_REPOS
 
     for _ in range(RUN_TIMES):
@@ -154,7 +154,7 @@ def main():
         graphql_times.append(gql_time)
         graphql_sizes.append(gql_size)
     
-        results.append({'api': 'GraphQL', 'query': 'Simple', 'time': gql_time, 'size': gql_size})
+        gql_results.append({'api': 'GraphQL', 'query': 'Simple', 'time': gql_time, 'size': gql_size})
 
     print('GraphQL - Complex query\n')
     graphql_times.clear()
@@ -166,15 +166,15 @@ def main():
         graphql_times.append(gql_time)
         graphql_sizes.append(gql_size)
     
-        results.append({'api': 'GraphQL', 'query': 'Complex', 'time': gql_time, 'size': gql_size})
+        gql_results.append({'api': 'GraphQL', 'query': 'Complex', 'time': gql_time, 'size': gql_size})
 
-    save_to_csv(results, 'gql_results.csv')
-    summarized_results=results.copy()
-    results.clear()
+    save_to_csv(gql_results, 'gql_results.csv')
+    summarized_results.extend(gql_results)
     
-    print('Rest - Simple query\n')
+    print('REST - Simple query\n')
     rest_times=[]
     rest_sizes=[]
+    rest_results=[]
     limit = MAX_REPOS
 
     for _ in range(RUN_TIMES):
@@ -182,9 +182,9 @@ def main():
         rest_times.append(rest_time)
         rest_sizes.append(rest_size)
         
-        results.append({'api': 'Rest', 'query': 'Simple', 'time': rest_time, 'size': rest_size})
+        rest_results.append({'api': 'REST', 'query': 'Simple', 'time': rest_time, 'size': rest_size})
         
-    print('Rest - Complex query\n')
+    print('REST - Complex query\n')
     rest_times.clear()
     rest_sizes.clear()
     limit = MAX_PULL_REQUESTS
@@ -194,13 +194,110 @@ def main():
         rest_times.append(rest_time)
         rest_sizes.append(rest_size)
         
-        results.append({'api': 'Rest', 'query': 'Complex', 'time': rest_time, 'size': rest_size})
+        rest_results.append({'api': 'REST', 'query': 'Complex', 'time': rest_time, 'size': rest_size})
         
-    save_to_csv(results, 'rest_results.csv')
-    summarized_results.extend(results)
+    save_to_csv(rest_results, 'rest_results.csv')
+    summarized_results.extend(rest_results)
         
-    data=summarize_results(summarized_results)
-    save_to_csv(data, 'avg_results.csv')
+    avg_results=summarize_results(summarized_results)
+    save_to_csv(avg_results, 'avg_results.csv')
+        
+    # Gráficos de Barras
+    bar(
+        data=avg_results,
+        bar='query',
+        label='api',
+        value='avg_time',
+        x_label='Tipo de Query',
+        y_label='Tempo Médio (s)',
+        title='Gráfico de Barras do Tempo Médio por API e Tipo de Query'
+    )
+    bar(
+        data=avg_results,
+        bar='query',
+        label='api',
+        value='avg_size',
+        x_label='Tipo de Query',
+        y_label='Tamanho Médio (bytes)',
+        title='Gráfico de Barras do Tamanho Médio por API e Tipo de Query'
+    )
+    
+    gql_results = read_csv('gql_results.csv')
+    rest_results = read_csv('rest_results.csv')
+    
+    # Boxplots
+    simple_gql_time_results = get_column(filter_rows(gql_results, 'query', ['Simple']), 'time')  
+    boxplot(
+        data=simple_gql_time_results,
+        columns=['GraphQL'],
+        x_label='Query Simples',
+        y_label='Tempo (segundos)',
+        title='Boxplot do Tempo (segundos) por API e Query Simples'
+    )
+    
+    complex_gql_time_results = get_column(filter_rows(gql_results, 'query', ['Complex']), 'time')
+    boxplot(
+        data=complex_gql_time_results,
+        columns=['GraphQL'],
+        x_label='Query Complexa',
+        y_label='Tempo (segundos)',
+        title='Boxplot do Tempo (segundos) por API e Query Complexa'
+    )
+    
+    simple_rest_time_results = get_column(filter_rows(rest_results, 'query', ['Simple']), 'time')
+    boxplot(
+        data=simple_rest_time_results,
+        columns=['REST'],
+        x_label='Query Simples',
+        y_label='Tempo (segundos)',
+        title='Boxplot do Tempo (segundos) por API e Query Simples'
+    )
+    
+    complex_rest_time_results = get_column(filter_rows(rest_results, 'query', ['Complex']), 'time')
+    boxplot(
+        data=complex_rest_time_results,
+        columns=['REST'],
+        x_label='Query Complexa',
+        y_label='Tempo (segundos)',
+        title='Boxplot do Tempo (segundos) por API e Query Complexa'
+    )
+    
+    # Test t
+    graphql_simple = filter_rows(gql_results, 'query', ['Simple'])
+    graphql_complex = filter_rows(gql_results, 'query', ['Complex'])
+    rest_simple = filter_rows(rest_results, 'query', ['Simple'])
+    rest_complex = filter_rows(rest_results, 'query', ['Complex'])
+    
+    # RQ1 - Tempo de Resposta
+    print('\nRQ1 - Teste de Hipótese para Tempo de Resposta')
+        
+    gql_time = get_column(graphql_simple, 'time')
+    rest_time = get_column(rest_simple, 'time')
+    
+    t_simple, p_simple = student_test(gql_time, rest_time)
+    print(f"Teste Consulta Simples: t-statistic= {t_simple}, p-value= {p_simple}")
+    
+    gql_time = get_column(graphql_complex, 'time')
+    rest_time = get_column(rest_complex, 'time')
+    
+    t_complex, p_complex = student_test(gql_time, rest_time)
+    print(f"Teste Consulta Complexa: t-statistic= {t_complex}, p-value= {p_complex}")
+    
+    # RQ2 - Tamanho da Resposta
+    print('\nRQ2 - Teste de Hipótese para Tamanho da Resposta')
+    
+    gql_sizes = get_column(graphql_simple, 'size')
+    rest_sizes = get_column(rest_simple, 'size')
+    
+    _, p_value = wilcoxon_test(gql_sizes, rest_sizes)
+    print(f"Teste Consulta Simples: p-value= {p_value}")
+    
+    gql_sizes = get_column(graphql_complex, 'size')
+    rest_sizes = get_column(rest_complex, 'size')
+    
+    _, p_value = wilcoxon_test(gql_sizes, rest_sizes)
+    print(f"Teste Consulta Complexa: p-value= {p_value}")
         
 
-main()
+if __name__ == '__main__':
+    main()
